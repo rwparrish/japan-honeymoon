@@ -13,6 +13,9 @@ interface MapViewProps {
     mapboxZoom?: number;
 }
 
+const LONG_TRANSITION_MS = 2400;  // For major transitions
+const SHORT_TRANSITION_MS = 1400; // For intermediate transitions
+
 export default function MapView({
     mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!,
     mapboxStyle = 'mapbox://styles/mapbox/streets-v12',
@@ -86,14 +89,13 @@ export default function MapView({
     const animateRoute = useCallback((startTime: number, duration: number) => {
         const frame = (currentTime: number) => {
             const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+            const progress = Math.max(0, Math.min(elapsed / duration, 1));  // Ensure between 0 and 1
             
             setRouteProgress(progress);
 
             if (progress < 1) {
                 animationFrameRef.current = requestAnimationFrame(frame);
             } else {
-                // Animation complete, move to next location
                 const nextIndex = currentPOIIndex + 1;
                 if (nextIndex < japanLocations.length) {
                     moveToNextLocation(nextIndex);
@@ -104,12 +106,31 @@ export default function MapView({
         animationFrameRef.current = requestAnimationFrame(frame);
     }, [currentPOIIndex, moveToNextLocation]);
 
+    const isJourneyComplete = currentPOIIndex === japanLocations.length - 1 && !isTransitioning;
+
+    const buttonText = currentPOIIndex === -1 
+        ? "Begin Journey" 
+        : isTransitioning 
+            ? "Going to next location..." 
+            : isJourneyComplete
+                ? "Relive Journey"
+                : "Continue Journey";
+
     const handleJourneyClick = () => {
         if (!mapRef.current || isTransitioning) return;
 
-        // Cancel any existing animation
-        if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
+        if (isJourneyComplete) {
+            // Reset to start the journey again
+            setCurrentPOIIndex(-1);
+            setIsTransitioning(false);
+            setRouteProgress(0);
+            mapRef.current.flyTo({
+                center: mapboxCenter,
+                zoom: mapboxZoom,
+                duration: LONG_TRANSITION_MS,
+                essential: true
+            });
+            return;
         }
 
         if (currentPOIIndex === -1) {
@@ -118,7 +139,7 @@ export default function MapView({
             mapRef.current.flyTo({
                 center: firstLocation.coordinates,
                 zoom: 12,
-                duration: 2400,
+                duration: LONG_TRANSITION_MS,
                 essential: true
             });
             setCurrentPOIIndex(0);
@@ -129,14 +150,14 @@ export default function MapView({
             mapRef.current.flyTo({
                 center: mapboxCenter,
                 zoom: mapboxZoom,
-                duration: 1400,
+                duration: SHORT_TRANSITION_MS,
                 essential: true
             });
 
             // 2. Start route animation after zoom out
             setTimeout(() => {
-                animateRoute(performance.now(), 1400);
-            }, 1400);
+                animateRoute(performance.now(), SHORT_TRANSITION_MS);
+            }, SHORT_TRANSITION_MS);
         }
     };
 
@@ -146,14 +167,6 @@ export default function MapView({
             cancelAnimationFrame(animationFrameRef.current);
         }
     }, []);
-
-    const buttonText = currentPOIIndex === -1 
-        ? "Begin Journey" 
-        : isTransitioning 
-            ? "Going to next location..." 
-            : "Continue Journey";
-
-    const isJourneyComplete = currentPOIIndex >= japanLocations.length - 1;
 
     const currentRoute = isTransitioning && currentPOIIndex < japanLocations.length - 1
         ? getRouteData(
@@ -171,7 +184,7 @@ export default function MapView({
             <button 
                 onClick={handleJourneyClick}
                 className="journey-button-top"
-                disabled={isJourneyComplete || isTransitioning}
+                disabled={isTransitioning}
             >
                 {buttonText}
             </button>
