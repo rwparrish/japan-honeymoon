@@ -14,11 +14,11 @@ interface MapViewProps {
 }
 
 const LONG_TRANSITION_MS = 2400;  // For major transitions
-const SHORT_TRANSITION_MS = 1400; // For intermediate transitions
+const SHORT_TRANSITION_MS = 2400; // For intermediate transitions
 
 export default function MapView({
     mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!,
-    mapboxStyle = 'mapbox://styles/mapbox/streets-v12',
+    mapboxStyle = 'mapbox://styles/mapbox/satellite-streets-v12',
     mapboxCenter = [137.5, 36.5],
     mapboxZoom = 5.5,
 }: MapViewProps) {
@@ -89,13 +89,14 @@ export default function MapView({
     const animateRoute = useCallback((startTime: number, duration: number) => {
         const frame = (currentTime: number) => {
             const elapsed = currentTime - startTime;
-            const progress = Math.max(0, Math.min(elapsed / duration, 1));  // Ensure between 0 and 1
+            const progress = Math.min(elapsed / duration, 1);
             
             setRouteProgress(progress);
 
             if (progress < 1) {
                 animationFrameRef.current = requestAnimationFrame(frame);
             } else {
+                // Animation complete, move to next location
                 const nextIndex = currentPOIIndex + 1;
                 if (nextIndex < japanLocations.length) {
                     moveToNextLocation(nextIndex);
@@ -145,6 +146,7 @@ export default function MapView({
             setCurrentPOIIndex(0);
         } else {
             setIsTransitioning(true);
+            setRouteProgress(1);  // Show line immediately
             
             // 1. Zoom out
             mapRef.current.flyTo({
@@ -154,9 +156,12 @@ export default function MapView({
                 essential: true
             });
 
-            // 2. Start route animation after zoom out
+            // 2. Move to next location without animating the line
             setTimeout(() => {
-                animateRoute(performance.now(), SHORT_TRANSITION_MS);
+                const nextIndex = currentPOIIndex + 1;
+                if (nextIndex < japanLocations.length) {
+                    moveToNextLocation(nextIndex);
+                }
             }, SHORT_TRANSITION_MS);
         }
     };
@@ -229,10 +234,13 @@ export default function MapView({
                         />
                     </Source>
 
-                    {currentRoute && (
+                    {isTransitioning && currentPOIIndex < japanLocations.length - 1 && (
                         <Source
                             type="geojson"
-                            data={currentRoute}
+                            data={getRouteData(
+                                japanLocations[currentPOIIndex],
+                                japanLocations[currentPOIIndex + 1]
+                            )}
                             lineMetrics={true}
                         >
                             <Layer
@@ -240,8 +248,8 @@ export default function MapView({
                                 type="line"
                                 paint={{
                                     'line-color': '#FF0000',
-                                    'line-width': 3,
-                                    'line-dasharray': [2, 1],
+                                    'line-width': 6,
+                                    'line-dasharray': [2, 2],
                                     'line-opacity': routeProgress
                                 }}
                                 layout={{
