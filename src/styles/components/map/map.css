@@ -1,5 +1,5 @@
-.journey-button {
-    @apply absolute bottom-8 left-1/2 transform -translate-x-1/2 
+.journey-button-top {
+    @apply absolute top-4 left-1/2 transform -translate-x-1/2 z-10
            bg-white px-6 py-2 rounded-full shadow-lg
            hover:bg-gray-100 transition-colors
            disabled:opacity-50
