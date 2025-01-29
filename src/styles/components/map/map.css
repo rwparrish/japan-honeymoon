@@ -1,0 +1,10 @@
+.journey-button {
+    @apply absolute bottom-8 left-1/2 transform -translate-x-1/2 
+           bg-white px-6 py-2 rounded-full shadow-lg
+           hover:bg-gray-100 transition-colors
+           disabled:opacity-50;
+}
+
+.map-container {
+    @apply relative w-full h-[75vh] md:h-[80vh] lg:h-[85vh];
+}
