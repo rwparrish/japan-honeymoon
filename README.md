@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Japan Honeymoon Journey
 
-## Getting Started
+An interactive visualization of our 2-week honeymoon adventure across Japan (Nov 27 - Dec 12, 2024). This project documents our circular journey through seven unique locations, starting and ending in Tokyo.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This web application provides an immersive way to explore our Japanese honeymoon journey through:
+- An interactive map powered by Mapbox
+- Our complete travel route across Japan
+- Photo and video galleries for each location
+- Points of interest with detailed information
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technical Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend**: Next.js with TypeScript
+- **Styling**: Tailwind CSS
+- **Mapping**: Mapbox
+- **Media Storage**: Cloudinary
+- **Deployment**: Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js 18.17 or later
+- npm or yarn package manager
+- Mapbox API key
+- Cloudinary account
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Clone the repository:
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) to view the project.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Goals
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Document and share our honeymoon memories with friends and family
+2. Practice modern web development technologies
+3. Build a beautiful, interactive user experience
+4. Learn and implement Mapbox and Cloudinary integrations
+5. Gain familiarity with Next.js
+
+## Status
+
+🚧 Currently under development
