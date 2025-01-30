@@ -42,7 +42,6 @@ export default function MapView({
             Math.pow(to.coordinates[1] - from.coordinates[1], 2)
         );
         
-        // Increased multiplier from 0.3 to 0.8 for a higher arch
         const controlPoint = [
             mid[0],
             mid[1] + (dist * 0.6) // Higher arch
@@ -85,27 +84,6 @@ export default function MapView({
         setIsTransitioning(false);
         setRouteProgress(0);
     }, []);
-
-    const animateRoute = useCallback((startTime: number, duration: number) => {
-        const frame = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            setRouteProgress(progress);
-
-            if (progress < 1) {
-                animationFrameRef.current = requestAnimationFrame(frame);
-            } else {
-                // Animation complete, move to next location
-                const nextIndex = currentPOIIndex + 1;
-                if (nextIndex < japanLocations.length) {
-                    moveToNextLocation(nextIndex);
-                }
-            }
-        };
-
-        animationFrameRef.current = requestAnimationFrame(frame);
-    }, [currentPOIIndex, moveToNextLocation]);
 
     const isJourneyComplete = currentPOIIndex === japanLocations.length - 1 && !isTransitioning;
 
@@ -166,7 +144,6 @@ export default function MapView({
         }
     };
 
-    // Add the new useEffect version
     useEffect(() => {
         // Cleanup function
         return () => {
