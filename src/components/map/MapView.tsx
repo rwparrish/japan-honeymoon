@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Map, { Source, Layer, MapRef } from 'react-map-gl';
 import '@/styles/components/map/map.css';
 import { japanGeoJson, japanLocations, Location } from './data/locations';
 import LocationModal from '@/components/map/LocationModal';
 
 interface MapViewProps {
-    mapboxAccessToken: string;
+    mapboxAccessToken?: string;
     mapboxStyle?: string;
     mapboxCenter?: [number, number];
     mapboxZoom?: number;
@@ -166,12 +166,15 @@ export default function MapView({
         }
     };
 
-    // Cleanup animation on unmount
-    useCallback(() => {
-        if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
-        }
-    }, []);
+    // Add the new useEffect version
+    useEffect(() => {
+        // Cleanup function
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, []); // Empty dependency array since we only need cleanup on unmount
 
     const currentRoute = isTransitioning && currentPOIIndex < japanLocations.length - 1
         ? getRouteData(
@@ -203,6 +206,12 @@ export default function MapView({
                         latitude: mapboxCenter[1],
                         zoom: mapboxZoom
                     }}
+                    minZoom={5}
+                    maxZoom={15}
+                    maxBounds={[
+                        [125.619324, 27.839037],  // Southwest: tighter around Kyushu
+                        [149.744277, 43.934476]   // Northeast: tighter around Hokkaido
+                    ]}
                     mapStyle={mapboxStyle}
                     mapboxAccessToken={mapboxAccessToken}
                     onClick={(event) => {
