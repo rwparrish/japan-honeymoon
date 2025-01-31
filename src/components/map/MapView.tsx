@@ -1,5 +1,6 @@
 "use client";
 
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import Map, { Source, Layer, MapRef } from 'react-map-gl';
 import '@/styles/components/map/map.css';
@@ -152,13 +153,6 @@ export default function MapView({
             }
         };
     }, []); // Empty dependency array since we only need cleanup on unmount
-
-    const currentRoute = isTransitioning && currentPOIIndex < japanLocations.length - 1
-        ? getRouteData(
-            japanLocations[currentPOIIndex],
-            japanLocations[currentPOIIndex + 1]
-          )
-        : null;
 
     if (!mapboxAccessToken) {
         return <div>Missing Mapbox access token</div>;
