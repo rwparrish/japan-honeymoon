@@ -9,3 +9,40 @@
 .map-container {
     @apply relative w-full h-[75vh] md:h-[80vh] lg:h-[85vh];
 }
+
+.custom-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.marker-pin {
+  width: 30px;
+  height: 30px;
+  background: #FF0000;
+  border: 2px solid #FFFFFF;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.marker-pin::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid #FF0000;
+}
+
+.marker-label {
+  margin-top: 4px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 3px;
+  color: #000000;
+  text-align: center;
+}

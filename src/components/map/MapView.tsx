@@ -2,9 +2,10 @@
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useRef } from 'react';
-import Map, { MapRef, Source, Layer } from 'react-map-gl';
+import Map, { MapRef, Marker, Source, Layer } from 'react-map-gl';
 import '@/styles/components/map/map.css';
-import { japanLocations } from './data/locations';
+import '@/styles/components/map/torii.css';
+import { japanLocations, japanGeoJson } from './data/locations';
 import { useJourneyAnimation } from '@/hooks/useJourneyAnimation';
 
 interface MapViewProps {
@@ -62,13 +63,13 @@ export default function MapView({
 
     return (
         <div className="relative">
-            <button 
+            <button
                 onClick={handleJourneyClick}
                 className="journey-button-top"
             >
                 {buttonText}
             </button>
-            
+
             <div className="map-container">
                 <Map
                     ref={mapRef}
@@ -94,13 +95,37 @@ export default function MapView({
                                 id="route-layer"
                                 type="line"
                                 paint={{
-                                    'line-color': '#FF0000',
+                                    'line-color': '#B03A2E',
                                     'line-width': 4,
                                     'line-opacity': 0.8,
                                 }}
                             />
                         </Source>
                     )}
+
+                    {/* Torii Gate Markers */}
+                    {japanGeoJson.features.map((feature) => (
+                        <Marker
+                            key={feature.properties.id}
+                            longitude={feature.geometry.coordinates[0]}
+                            latitude={feature.geometry.coordinates[1]}
+                            anchor="bottom"
+                        >
+                            <div className="torii-marker">
+                                <div className="gate">
+                                    <div className="upper"></div>
+                                    <div className="red"></div>
+                                    <div className="red-two"></div>
+                                    <div className="lantern"></div>
+                                    <div className="pillar"></div>
+                                    <div className="pillar left"></div>
+                                    <div className="side-gate"></div>
+                                    <div className="side-gate-two"></div>
+                                </div>
+                                <div className="desc">Torii</div>
+                            </div>
+                        </Marker>
+                    ))}
                 </Map>
             </div>
         </div>
