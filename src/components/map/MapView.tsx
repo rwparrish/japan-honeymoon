@@ -65,7 +65,8 @@ export default function MapView({
         <div className="relative">
             <button
                 onClick={handleJourneyClick}
-                className="journey-button-top"
+                className={`journey-button-top ${isTransitioning ? 'disabled' : ''}`}
+                disabled={isTransitioning}
             >
                 {buttonText}
             </button>

@@ -1,9 +1,30 @@
 .journey-button-top {
-    @apply absolute top-4 left-1/2 transform -translate-x-1/2 z-10
-           bg-white px-6 py-2 rounded-full shadow-lg
-           hover:bg-gray-100 transition-colors
-           disabled:opacity-50
-           text-gray-800 font-medium;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  
+  background-color: #B03A2E; /* Torii gate color */
+  color: #fff; /* White text for contrast */
+  border: none;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.journey-button-top:hover {
+  background-color: #a13227; /* Slightly darker shade on hover */
+}
+
+.journey-button-top:disabled,
+.journey-button-top.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+  background-color: #B03A2E; /* Same base color when disabled */
 }
 
 .map-container {

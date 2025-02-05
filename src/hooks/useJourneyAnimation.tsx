@@ -44,7 +44,7 @@ export function useJourneyAnimation({
     currentPOIIndex === -1
       ? 'Begin Journey'
       : isTransitioning
-      ? 'Going to next location...'
+      ? `Traveling to ${japanLocations[currentPOIIndex + 1].name}...`
       : isJourneyComplete
       ? 'Relive Journey'
       : 'Continue Journey';
