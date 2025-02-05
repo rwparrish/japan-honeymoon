@@ -19,7 +19,7 @@ const TRANSITIONS = 2400;
 
 export default function MapView({
     mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!,
-    mapboxStyle = 'mapbox://styles/mapbox/satellite-streets-v12',
+    mapboxStyle = 'mapbox://styles/mapbox/outdoors-v11',
     mapboxCenter = [137.5, 36.5],
     mapboxZoom = 5.5,
 }: MapViewProps) {
@@ -116,13 +116,11 @@ export default function MapView({
                                     <div className="upper"></div>
                                     <div className="red"></div>
                                     <div className="red-two"></div>
-                                    <div className="lantern"></div>
                                     <div className="pillar"></div>
                                     <div className="pillar left"></div>
                                     <div className="side-gate"></div>
                                     <div className="side-gate-two"></div>
                                 </div>
-                                <div className="desc">Torii</div>
                             </div>
                         </Marker>
                     ))}
