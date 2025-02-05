@@ -7,8 +7,7 @@ export interface JourneyAnimationProps {
   japanLocations: Location[];
   mapboxCenter: [number, number];
   mapboxZoom: number;
-  LONG_TRANSITION_MS: number;
-  SHORT_TRANSITION_MS: number;
+  TRANSITIONS: number;
 }
 
 export function useJourneyAnimation({
@@ -16,8 +15,7 @@ export function useJourneyAnimation({
   japanLocations,
   mapboxCenter,
   mapboxZoom,
-  LONG_TRANSITION_MS,
-  SHORT_TRANSITION_MS,
+  TRANSITIONS
 }: JourneyAnimationProps) {
   const [currentPOIIndex, setCurrentPOIIndex] = useState(-1);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -61,7 +59,7 @@ export function useJourneyAnimation({
       mapRef.current.flyTo({
         center: mapboxCenter,
         zoom: mapboxZoom,
-        duration: LONG_TRANSITION_MS,
+        duration: TRANSITIONS,
         essential: true,
       });
       return;
@@ -73,7 +71,7 @@ export function useJourneyAnimation({
       mapRef.current.flyTo({
         center: firstLocation.coordinates,
         zoom: 12,
-        duration: LONG_TRANSITION_MS,
+        duration: TRANSITIONS,
         essential: true,
       });
       setCurrentPOIIndex(0);
@@ -84,7 +82,7 @@ export function useJourneyAnimation({
       mapRef.current.flyTo({
         center: mapboxCenter,
         zoom: mapboxZoom,
-        duration: SHORT_TRANSITION_MS,
+        duration: TRANSITIONS,
         essential: true,
       });
 
@@ -94,7 +92,7 @@ export function useJourneyAnimation({
         if (nextIndex < japanLocations.length) {
           moveToNextLocation(nextIndex);
         }
-      }, SHORT_TRANSITION_MS);
+      }, TRANSITIONS);
     }
   };
 

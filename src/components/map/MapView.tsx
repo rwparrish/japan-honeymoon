@@ -1,11 +1,10 @@
 "use client";
 
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import Map, { MapRef, Source, Layer } from 'react-map-gl';
 import '@/styles/components/map/map.css';
 import { japanLocations } from './data/locations';
-import LocationModal from '@/components/map/LocationModal';
 import { useJourneyAnimation } from '@/hooks/useJourneyAnimation';
 
 interface MapViewProps {
@@ -15,8 +14,7 @@ interface MapViewProps {
     mapboxZoom?: number;
 }
 
-const LONG_TRANSITION_MS = 2400;  // For major transitions
-const SHORT_TRANSITION_MS = 2400; // For intermediate transitions
+const TRANSITIONS = 2400;
 
 export default function MapView({
     mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!,
@@ -24,8 +22,7 @@ export default function MapView({
     mapboxCenter = [137.5, 36.5],
     mapboxZoom = 5.5,
 }: MapViewProps) {
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const mapRef = useRef<MapRef>(null);
+    const mapRef = useRef<MapRef>(null!);
 
     // Use the custom hook to manage journey animations
     const { handleJourneyClick, buttonText, currentPOIIndex, isTransitioning } = useJourneyAnimation({
@@ -33,27 +30,28 @@ export default function MapView({
         japanLocations,
         mapboxCenter,
         mapboxZoom,
-        LONG_TRANSITION_MS,
-        SHORT_TRANSITION_MS,
+        TRANSITIONS
     });
 
     if (!mapboxAccessToken) {
         return <div>Missing Mapbox access token</div>;
     }
 
-    // Compute route coordinates from visited points.
-    // When transitioning, include the next destination to display the connecting line immediately.
+    // Computes the route coordinates based on visited locations.
     let routeCoordinates: Array<[number, number]> = [];
     if (currentPOIIndex >= 0) {
-        // Coordinates for visited locations.
-        routeCoordinates = japanLocations.slice(0, currentPOIIndex + 1).map(loc => loc.coordinates);
-        // If transitioning, include the next planned POI.
+        // Get coordinates for all visited locations.
+        routeCoordinates = japanLocations
+            .slice(0, currentPOIIndex + 1)
+            .map((loc) => loc.coordinates);
         const nextIndex = currentPOIIndex + 1;
+        // If transitioning, include the next location to immediately show the connecting line.
         if (isTransitioning && nextIndex < japanLocations.length) {
             routeCoordinates.push(japanLocations[nextIndex].coordinates);
         }
     }
 
+    // Build the GeoJSON feature for the route.
     const routeGeoJson = {
         type: "Feature",
         geometry: {
@@ -88,23 +86,9 @@ export default function MapView({
                     ]}
                     mapStyle={mapboxStyle}
                     mapboxAccessToken={mapboxAccessToken}
-                    onClick={(event) => {
-                        const features = event.features || [];
-                        const clickedLocation = features[0];
-                        
-                        if (clickedLocation) {
-                            const locationData = japanLocations.find(
-                                loc => loc.id === clickedLocation?.properties?.id
-                            );
-                            if (locationData) {
-                                setSelectedLocation(locationData);
-                            }
-                        }
-                    }}
-                    interactiveLayerIds={['points']}
-                    cursor={selectedLocation ? 'pointer' : 'default'}
                 >
-                    {(currentPOIIndex >= 0 && routeCoordinates.length > 1) && (
+                    {/* Render the route when there are at least two points */}
+                    {routeCoordinates.length > 1 && (
                         <Source id="route" type="geojson" data={routeGeoJson}>
                             <Layer
                                 id="route-layer"
@@ -112,18 +96,12 @@ export default function MapView({
                                 paint={{
                                     'line-color': '#FF0000',
                                     'line-width': 4,
-                                    'line-dasharray': [2, 2],
                                     'line-opacity': 0.8,
                                 }}
                             />
                         </Source>
                     )}
                 </Map>
-                
-                <LocationModal 
-                    location={selectedLocation}
-                    onClose={() => setSelectedLocation(null)}
-                />
             </div>
         </div>
     );
