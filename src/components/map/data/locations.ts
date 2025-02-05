@@ -1,9 +1,18 @@
+export interface Photo {
+    url: string;
+    lat: number;
+    lng: number;
+    caption?: string;
+    takenAt?: string;
+}
+
 export interface Location {
     id: number;
     name: string;
     coordinates: [number, number]; // [longitude, latitude]
     dates: string;
     description?: string;
+    photos?: Photo[];
 }
 
 export interface JapanGeoJSON {
@@ -29,7 +38,17 @@ export const japanLocations: Location[] = [
         name: "Tokyo",
         coordinates: [139.7690, 35.6804],
         dates: "11/27/24 - 11/30/24",
-        description: "Starting point of our journey"
+        description: "Starting point of our journey",
+        photos: [
+            {
+                url: "/photos/tokyo/shibuya.jpg",
+                lat: 139.7015,
+                lng: 35.6580,
+                caption: "Shibuya Crossing",
+                takenAt: "2024-11-28"
+            },
+            // ... more photos
+        ]
     },
     {
         id: 2,
